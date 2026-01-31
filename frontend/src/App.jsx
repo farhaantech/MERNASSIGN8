@@ -107,10 +107,10 @@ export default function App() {
             </div>
 
             <div className="modal-footer">
-              <button className="btn btn-secondary" data-bs-dismiss="modal">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                 Cancel
               </button>
-              <button className="btn btn-primary" onClick={saveEdit}>
+              <button type="button" className="btn btn-primary" onClick={saveEdit}>
                 Save Changes
               </button>
             </div>
@@ -136,10 +136,10 @@ export default function App() {
             </div>
 
             <div className="modal-footer">
-              <button className="btn btn-secondary" data-bs-dismiss="modal">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                 Cancel
               </button>
-              <button className="btn btn-danger" onClick={confirmDelete}>
+              <button type="button" className="btn btn-danger" onClick={confirmDelete}>
                 Delete
               </button>
             </div>
