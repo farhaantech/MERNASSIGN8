@@ -9,8 +9,10 @@ const baseURL =
 
 export default function TaskList({ onEdit, onDelete }) {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [alert, setAlert] = useState("");
 
   const loadTasks = async () => {
@@ -18,6 +20,7 @@ export default function TaskList({ onEdit, onDelete }) {
     try {
       const res = await axios.get(`${baseURL}/tasks`);
       setTasks(res.data.tasks);
+      setFilteredTasks(res.data.tasks);
     } catch (error) {
       console.log(error);
     }
@@ -27,6 +30,13 @@ export default function TaskList({ onEdit, onDelete }) {
   useEffect(() => {
     loadTasks();
   }, []);
+
+  useEffect(() => {
+    const filtered = tasks.filter(task => 
+      task.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredTasks(filtered);
+  }, [searchTerm, tasks]);
 
   const createTask = async (e) => {
     e.preventDefault();
@@ -60,6 +70,17 @@ export default function TaskList({ onEdit, onDelete }) {
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div className="form-control" style={{ marginTop: '10px' }}>
+          <input
+            type="text"
+            className="task-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search tasks..."
+          />
+        </div>
+
         {alert && <div className="form-alert text-success">{alert}</div>}
       </form>
 
@@ -72,11 +93,13 @@ export default function TaskList({ onEdit, onDelete }) {
         </p>
 
         <div className="tasks">
-          {tasks.length === 0 && !loading && (
-            <h5 className="empty-list">No tasks in your list</h5>
+          {filteredTasks.length === 0 && !loading && (
+            <h5 className="empty-list">
+              {searchTerm ? "No tasks found matching your search" : "No tasks in your list"}
+            </h5>
           )}
 
-          {tasks.map((task) => (
+          {filteredTasks.map((task) => (
             <TaskItem
               key={task._id}
               task={task}
