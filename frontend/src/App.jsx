@@ -11,6 +11,7 @@ export default function App() {
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editCompleted, setEditCompleted] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [deleteId, setDeleteId] = useState(null);
   const [deleteName, setDeleteName] = useState("");
@@ -35,7 +36,12 @@ export default function App() {
         completed: editCompleted,
       });
 
-      window.location.reload();
+      // Close modal
+      const modal = window.bootstrap.Modal.getInstance(document.getElementById("editModal"));
+      if (modal) modal.hide();
+      
+      // Refresh task list
+      setRefreshKey(prev => prev + 1);
     } catch (err) {
       console.log(err);
     }
@@ -53,13 +59,23 @@ export default function App() {
   };
 
   const confirmDelete = async () => {
-    await axios.delete(`${baseURL}/tasks/${deleteId}`);
-    window.location.reload();
+    try {
+      await axios.delete(`${baseURL}/tasks/${deleteId}`);
+      
+      // Close modal
+      const modal = window.bootstrap.Modal.getInstance(document.getElementById("deleteModal"));
+      if (modal) modal.hide();
+      
+      // Refresh task list
+      setRefreshKey(prev => prev + 1);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <>
-      <TaskList onEdit={openEditModal} onDelete={openDeleteModal} />
+      <TaskList key={refreshKey} onEdit={openEditModal} onDelete={openDeleteModal} />
 
       {/*  EDIT MODAL */}
       <div className="modal fade" id="editModal" tabIndex="-1">
